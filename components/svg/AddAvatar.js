@@ -1,6 +1,6 @@
 import Svg, { Circle, Path } from "react-native-svg";
 
-export default function AddSvg({ style }) {
+export default function AddAvatar({ style }) {
   return (
     <Svg
       width="25"

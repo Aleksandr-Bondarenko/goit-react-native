@@ -6,16 +6,19 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import RegistrationScreen from "./screens/RegistrationScreen";
-import LoginScreen from "./screens/LoginScreen";
+import { useRoutes } from "./router";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [isAppReady, setIsAppReady] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const routing = useRoutes(user);
 
   useEffect(() => {
     async function prepare() {
@@ -56,21 +59,22 @@ export default function App() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      onLayout={onLayoutRootView}
-    >
-      <ImageBackground
-        source={require("./assets/background.jpg")}
-        style={styles.backgroundImage}
+    <NavigationContainer>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        onLayout={onLayoutRootView}
       >
-        <View style={styles.formContainer}>
-          <RegistrationScreen />
-          {/* <LoginScreen /> */}
-        </View>
-      </ImageBackground>
-    </KeyboardAvoidingView>
+        {/* <ImageBackground
+          source={require("./assets/background.jpg")}
+          style={styles.backgroundImage}
+        > */}
+        {/* <View style={styles.formContainer}> */}
+        {routing}
+        {/* </View> */}
+        {/* </ImageBackground> */}
+      </KeyboardAvoidingView>
+    </NavigationContainer>
   );
 }
 

@@ -11,20 +11,14 @@ import {
   ImageBackground,
 } from "react-native";
 
-import AddAvatar from "./svg/AddAvatar";
+import AddAvatar from "../../components/svg/AddAvatar";
 
-export default function AuthForm({ type, navigation }) {
-  const initialState =
-    type === "register"
-      ? {
-          login: "",
-          email: "",
-          password: "",
-        }
-      : {
-          email: "",
-          password: "",
-        };
+const RegistrationScreen = ({ navigation }) => {
+  const initialState = {
+    login: "",
+    email: "",
+    password: "",
+  };
   const [credentials, setCredentials] = useState(initialState);
   const [isHidePassword, setIsHidePassword] = useState(true);
   const [isKeyboardShow, setIsKeyboardShow] = useState(false);
@@ -85,7 +79,7 @@ export default function AuthForm({ type, navigation }) {
 
   return (
     <ImageBackground
-      source={require("../assets/background.jpg")}
+      source={require("../../assets/background.jpg")}
       style={styles.backgroundImage}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -96,28 +90,25 @@ export default function AuthForm({ type, navigation }) {
             <AddAvatar style={styles.addAvatar} />
           </View>
 
-          <Text style={styles.formTitle}>
-            {type === "register" ? "Регистрация" : "Войти"}
-          </Text>
-          {type === "register" && (
-            <View
-              style={{
-                ...styles.input,
-                borderWidth: 1,
-                borderColor: isInputFocused.login ? "#FF6C00" : "transparent",
-              }}
-            >
-              <TextInput
-                style={styles.inputText}
-                value={credentials.login}
-                onChangeText={(value) => inputHandler("login", value)}
-                onFocus={() => onFocusInput("login")}
-                onBlur={() => onBlurInput("login")}
-                placeholder="Логин"
-                placeholderTextColor="#BDBDBD"
-              />
-            </View>
-          )}
+          <Text style={styles.formTitle}>Регистрация</Text>
+
+          <View
+            style={{
+              ...styles.input,
+              borderWidth: 1,
+              borderColor: isInputFocused.login ? "#FF6C00" : "transparent",
+            }}
+          >
+            <TextInput
+              style={styles.inputText}
+              value={credentials.login}
+              onChangeText={(value) => inputHandler("login", value)}
+              onFocus={() => onFocusInput("login")}
+              onBlur={() => onBlurInput("login")}
+              placeholder="Логин"
+              placeholderTextColor="#BDBDBD"
+            />
+          </View>
 
           <View
             style={{
@@ -182,28 +173,22 @@ export default function AuthForm({ type, navigation }) {
               activeOpacity={0.5}
               style={styles.button}
             >
-              <Text style={styles.buttonTitle}>
-                {type === "register" ? "Зарегистрироваться" : "Войти"}
-              </Text>
+              <Text style={styles.buttonTitle}>Зарегистрироваться</Text>
             </TouchableOpacity>
           )}
 
           {!isKeyboardShow && (
             <>
               <Text style={styles.linkToAnotherScreen}>
-                {type === "register" ? "Уже есть аккаунт?" : "Нет аккаунта?"}{" "}
+                Уже есть аккаунт?{" "}
                 <Text
                   style={{
                     ...styles.linkToAnotherScreen,
                     textDecorationLine: "underline",
                   }}
-                  onPress={() =>
-                    type === "register"
-                      ? navigation.navigate("login")
-                      : navigation.navigate("register")
-                  }
+                  onPress={() => navigation.navigate("login")}
                 >
-                  {type === "register" ? "Войти" : "Зарегистрироваться"}
+                  Войти
                 </Text>
               </Text>
 
@@ -228,7 +213,9 @@ export default function AuthForm({ type, navigation }) {
       </TouchableWithoutFeedback>
     </ImageBackground>
   );
-}
+};
+
+export default RegistrationScreen;
 
 const styles = StyleSheet.create({
   backgroundImage: {
