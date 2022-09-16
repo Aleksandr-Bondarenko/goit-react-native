@@ -18,10 +18,6 @@ import PostsScreen from "./PostsScreen";
 
 export default function Home({ navigation }) {
   return (
-    // <View style={styles.container}>
-    //   {/* <PostsScreen /> */}
-    // </View>
-
     <MainTabs.Navigator
       screenOptions={{
         tabBarShowLabel: false,
@@ -37,10 +33,7 @@ export default function Home({ navigation }) {
         tabBarStyle: {
           height: 84,
         },
-        headerStyle: {
-          //   borderBottomWidth: 1,
-          //   borderBottomColor: "rgba(0, 0, 0, 0.3)",
-        },
+        // headerStyle: {},
         headerTitleStyle: {
           color: "#212121",
           fontFamily: "Roboto-Medium",
@@ -51,27 +44,19 @@ export default function Home({ navigation }) {
     >
       <MainTabs.Screen
         options={{
-          title: "Публикации",
-          headerRight: () => <LogOut />,
           tabBarIcon: ({ focused, size, color }) => <AllPosts />,
+          headerShown: false,
         }}
         name="Posts"
         component={PostsScreen}
       />
-      {/* <MainTabs.Screen
-        options={{
-          tabBarIcon: ({ focused, size, color }) => <ProfileInfo />,
-        }}
-        name="Profile"
-        component={ProfileScreen}
-      /> */}
       <MainTabs.Screen
         options={{
           title: "Создать публикацию",
           headerLeft: () => (
             <HeaderBackButton
               backImage={() => <BackIcon />}
-              onPress={() => navigation.navigate("Posts")}
+              onPress={() => navigation.navigate("Home", { screen: "Posts" })}
             />
           ),
           tabBarIcon: ({ focused, size, color }) => (
@@ -110,11 +95,3 @@ export default function Home({ navigation }) {
     </MainTabs.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});

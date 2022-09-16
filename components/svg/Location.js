@@ -1,6 +1,6 @@
 import Svg, { Path } from "react-native-svg";
 
-export default function Location({ style }) {
+export default function LocationIcon({ style }) {
   return (
     <Svg
       style={style}

@@ -65,14 +65,7 @@ export default function App() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         onLayout={onLayoutRootView}
       >
-        {/* <ImageBackground
-          source={require("./assets/background.jpg")}
-          style={styles.backgroundImage}
-        > */}
-        {/* <View style={styles.formContainer}> */}
         {routing}
-        {/* </View> */}
-        {/* </ImageBackground> */}
       </KeyboardAvoidingView>
     </NavigationContainer>
   );
@@ -81,18 +74,5 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  backgroundImage: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    resizeMode: "cover",
-    position: "relative",
-  },
-  formContainer: {
-    flex: 1,
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
   },
 });

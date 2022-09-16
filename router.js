@@ -1,22 +1,12 @@
 import React from "react";
-import { View } from "react-native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import RegistrationScreen from "./screens/auth/RegistrationScreen";
 import LoginScreen from "./screens/auth/LoginScreen";
-import PostsScreen from "./screens/main/PostsScreen";
-import CreatePostScreen from "./screens/main/CreatePostScreen";
-import ProfileScreen from "./screens/main/ProfileScreen";
 import HomeScreen from "./screens/main/HomeScreen";
 
-import AllPosts from "./components/svg/AllPosts";
-import CreatePost from "./components/svg/CreatePost";
-import ProfileInfo from "./components/svg/ProfileInfo";
-
 const AuthStack = createNativeStackNavigator();
-const MainTabs = createBottomTabNavigator();
 
 export const useRoutes = (isAuth) => {
   const config = {
@@ -68,62 +58,4 @@ export const useRoutes = (isAuth) => {
       </AuthStack.Navigator>
     );
   }
-  //   return (
-  //     <MainTabs.Navigator
-  //       screenOptions={{
-  //         tabBarShowLabel: false,
-  //         headerShown: false,
-  //         tabBarStyle: {
-  //           height: 84,
-  //         },
-  //         tabBarItemStyle: {},
-  //       }}
-  //     >
-  //       <MainTabs.Screen
-  //         options={{
-  //           tabBarIcon: ({ focused, size, color }) => <AllPosts />,
-  //         }}
-  //         name="Posts"
-  //         component={PostsScreen}
-  //       />
-  //       {/* <MainTabs.Screen
-  //         options={{
-  //           tabBarIcon: ({ focused, size, color }) => <ProfileInfo />,
-  //         }}
-  //         name="Profile"
-  //         component={ProfileScreen}
-  //       /> */}
-  //       <MainTabs.Screen
-  //         options={{
-  //           tabBarIcon: ({ focused, size, color }) => (
-  //             <View
-  //               style={{
-  //                 width: 70,
-  //                 height: 40,
-  //                 backgroundColor: "#FF6C00",
-  //                 borderRadius: 20,
-  //                 alignItems: "center",
-  //                 justifyContent: "center",
-  //               }}
-  //             >
-  //               {/* {focused ? <CreatePost /> : <ProfileInfo />} */}
-  //               <CreatePost />
-  //             </View>
-  //           ),
-  //         }}
-  //         name="Create"
-  //         component={CreateScreen}
-  //       />
-  //       <MainTabs.Screen
-  //         options={{
-  //           tabBarIcon: ({ focused, size, color }) => (
-  //             // focused ? <CreatePost /> : <ProfileInfo />,
-  //             <ProfileInfo />
-  //           ),
-  //         }}
-  //         name="Profile"
-  //         component={ProfileScreen}
-  //       />
-  //     </MainTabs.Navigator>
-  //   );
 };

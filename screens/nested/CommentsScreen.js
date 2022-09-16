@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default function CommentsScreen() {
+export default function CommentsScreen({ route }) {
+  console.log(">>>ROUTE", route);
   return (
     <View style={styles.container}>
       <Text>Comments Screen</Text>

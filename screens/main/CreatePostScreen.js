@@ -6,34 +6,93 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
 } from "react-native";
-import Location from "../../components/svg/Location";
+import { useIsFocused } from "@react-navigation/native";
+import { Camera, takePictureAsync, PermissionStatus } from "expo-camera";
+import * as Location from "expo-location";
+
+// icons imports
+import LocationIcon from "../../components/svg/Location";
 import TrashPost from "../../components/svg/TrashPost";
 import MainButton from "../../components/MainButton";
 
-export default function CreatePostScreen() {
+export default function CreatePostScreen({ navigation, route }) {
   const initialPostData = {
-    image: null,
+    photo: "",
     name: "",
-    location: "",
+    place: "",
   };
   const [postData, setPostData] = useState(initialPostData);
+  const [location, setLocation] = useState(null);
   const [isDisableBtn, setIsDisableBtn] = useState(true);
+  const [hasCamPermission, setHasCamPermission] = useState(false);
+  const [hasLocationPermission, setHasLocationPermission] = useState(false);
+  const [camRef, setCamRef] = useState(null);
+
+  // const [permission, requestPermission] = Camera.useCameraPermissions();
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      // await MediaLibrary.requestPermissionsAsync();
+
+      setHasCamPermission(status === "granted");
+
+      const locationStatus = await Location.requestForegroundPermissionsAsync();
+      if (locationStatus.status) {
+        setHasLocationPermission(locationStatus.status === "granted");
+      }
+      let locationData = await Location.getCurrentPositionAsync({});
+      setLocation(locationData);
+      // console.log(">>>>>locationData", locationData);
+    })();
+  }, []);
 
   useEffect(() => {
     const isPostDataReady = Object.values(postData).every(
-      (value) => value !== ("" || null)
+      (value) => value !== ""
     );
     setIsDisableBtn(!isPostDataReady);
   }, [postData]);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setPostData(initialPostData);
+    }
+  }, [isFocused]);
 
   const handleInput = (type, value) => {
     setPostData((prevState) => ({ ...prevState, [type]: value }));
   };
 
   const handlePress = () => {
-    console.log(">>>PostData", postData);
+    navigation.navigate("DefaultPosts", {
+      postData,
+      location: location.coords,
+    });
+    setPostData(initialPostData);
+    // setLocation(null);
   };
+
+  const takePhoto = async () => {
+    try {
+      const photo = await camRef.takePictureAsync({ skipProcessing: false });
+      console.log(">>>>PHOTO", photo.uri);
+      setPostData((prevState) => ({ ...prevState, photo: photo.uri }));
+      camRef.pausePreview();
+      // navigation.navigate("login");
+    } catch (err) {
+      setPostData((prevState) => ({ ...prevState, photo: "file" }));
+      console.log(">>>err", err);
+    }
+  };
+
+  // if (hasCamPermission === null) {
+  //   return <View />;
+  // }
 
   return (
     <View style={styles.container}>
@@ -41,12 +100,54 @@ export default function CreatePostScreen() {
         // contentContainerStyle={{ paddingBottom: 10 }}
         showsVerticalScrollIndicator={false}
       >
-        <View>
+        {isFocused && (
           <View style={styles.photoBlock}>
-            <Image source={require("../../assets/add-photo.png")} />
+            {hasCamPermission ? (
+              <Camera
+                onCameraReady={() => console.log(">>>cameraISready")}
+                onMountError={() => console.log(">>>cameraNOTready")}
+                type="back"
+                ref={(ref) => setCamRef(ref)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                // style={styles.photoBlock}
+              >
+                {postData.photo && (
+                  <Image
+                    source={{ uri: postData.photo }}
+                    style={{
+                      borderRadius: 8,
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  />
+                )}
+                <TouchableOpacity
+                  onPress={takePhoto}
+                  style={{ position: "absolute" }}
+                >
+                  <Image source={require("../../assets/add-photo.png")} />
+                </TouchableOpacity>
+              </Camera>
+            ) : (
+              <View
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text>No access to camera!</Text>
+              </View>
+            )}
           </View>
-          <Text style={styles.blockLabel}>Загрузите фото</Text>
-        </View>
+        )}
+        <Text style={styles.blockLabel}>Загрузите фото</Text>
 
         <View style={{}}>
           <View
@@ -67,10 +168,10 @@ export default function CreatePostScreen() {
           <View
             style={{ ...styles.input, paddingLeft: 28, position: "relative" }}
           >
-            <Location style={{ position: "absolute", top: 18 }} />
+            <LocationIcon style={{ position: "absolute", top: 18 }} />
             <TextInput
-              value={postData.location}
-              onChangeText={(value) => handleInput("location", value)}
+              value={postData.place}
+              onChangeText={(value) => handleInput("place", value)}
               style={styles.inputText}
               placeholder="Местность"
               placeholderTextColor="#BDBDBD"
@@ -87,18 +188,24 @@ export default function CreatePostScreen() {
       </ScrollView>
 
       <View style={{ height: 84, justifyContent: "center" }}>
-        <View
+        <TouchableOpacity
           style={{
             width: 70,
             height: 40,
-            backgroundColor: "#F6F6F6",
+            backgroundColor: postData.photo ? "#FF6C00" : "#F6F6F6",
             borderRadius: 20,
             alignItems: "center",
             justifyContent: "center",
           }}
+          disabled={!postData.photo}
+          onPress={() => {
+            console.log(">>>>camRef", camRef);
+            setPostData((prevState) => ({ ...prevState, photo: "" }));
+            camRef.resumePreview();
+          }}
         >
           <TrashPost />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -114,11 +221,10 @@ const styles = StyleSheet.create({
   photoBlock: {
     width: 343,
     height: 240,
-    borderRadius: 8,
+    borderRadius: 10,
     backgroundColor: "#F6F6F6",
     marginTop: 32,
-    alignItems: "center",
-    justifyContent: "center",
+    overflow: "hidden",
   },
   blockLabel: {
     marginTop: 8,
